@@ -135,7 +135,7 @@ const leadMobile = {
 const leadClampMobile = {
   display: "-webkit-box",
   WebkitBoxOrient: "vertical",
-  WebkitLineClamp: 4,
+  WebkitLineClamp: 6,
   overflow: "hidden",
 };
 
@@ -540,6 +540,21 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
                 <strong style={{ fontWeight: 600, opacity: 1 }}>Setup</strong> tabs on the screen edges
                 to slide the panels open. Each panel has{" "}
                 <strong style={{ fontWeight: 600, opacity: 1 }}>Edit</strong> for changes.
+                {" "}
+                We never collect or store your financial details.{" "}
+                <a
+                  href="/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "rgba(147, 197, 253, 0.95)",
+                    textDecoration: "underline",
+                    textUnderlineOffset: 3,
+                  }}
+                >
+                  Privacy policy
+                </a>
+                .
               </p>
             </div>
           </div>
