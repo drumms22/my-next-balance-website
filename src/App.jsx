@@ -1,12 +1,23 @@
 import { useCallback, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
 import GuideModal from "./components/guide/GuideModal";
+import PrivacyAcknowledgmentModal from "./components/PrivacyAcknowledgmentModal";
 import "./App.css";
 
 const INTRO_STORAGE_KEY = "fp_hasSeenIntro_v1";
+const PRIVACY_ACK_STORAGE_KEY = "fp_privacyAck_v1";
 
 function App() {
+  const [privacyOpen, setPrivacyOpen] = useState(() => {
+    try {
+      return localStorage.getItem(PRIVACY_ACK_STORAGE_KEY) !== "1";
+    } catch {
+      return true;
+    }
+  });
+
   const [showLanding, setShowLanding] = useState(() => {
     try {
       return localStorage.getItem(INTRO_STORAGE_KEY) !== "1";
@@ -16,6 +27,15 @@ function App() {
   });
 
   const [guideOpen, setGuideOpen] = useState(false);
+
+  const acknowledgePrivacy = () => {
+    try {
+      localStorage.setItem(PRIVACY_ACK_STORAGE_KEY, "1");
+    } catch {
+      // ignore
+    }
+    setPrivacyOpen(false);
+  };
 
   const finishIntro = () => {
     try {
@@ -28,12 +48,18 @@ function App() {
 
   const setGuide = useCallback((next) => setGuideOpen(Boolean(next)), []);
 
-  if (showLanding) return <LandingPage onContinue={finishIntro} />;
-
   return (
     <>
-      <Home guideModalOpen={guideOpen} onOpenGuide={setGuide} />
-      <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
+      <PrivacyAcknowledgmentModal open={privacyOpen} onAcknowledge={acknowledgePrivacy} />
+      {showLanding ? (
+        <LandingPage onContinue={finishIntro} />
+      ) : (
+        <>
+          <Home guideModalOpen={guideOpen} onOpenGuide={setGuide} />
+          <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} />
+        </>
+      )}
+      <Analytics />
     </>
   );
 }
