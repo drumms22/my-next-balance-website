@@ -1,0 +1,234 @@
+#root {
+  /* This app uses its own layout (fixed header + scrollable main).
+     The default Vite template constraints were shrinking the projection area. */
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+}
+
+/* Tippy v5 (@tippy.js/react): darker tooltip than default #333 */
+.tippy-tooltip {
+  background-color: #141414 !important;
+  color: rgba(255, 255, 255, 0.94) !important;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+.tippy-tooltip[data-placement^="top"] > .tippy-arrow {
+  border-top-color: #141414 !important;
+}
+
+.tippy-tooltip[data-placement^="bottom"] > .tippy-arrow {
+  border-bottom-color: #141414 !important;
+}
+
+.tippy-tooltip[data-placement^="left"] > .tippy-arrow {
+  border-left-color: #141414 !important;
+}
+
+.tippy-tooltip[data-placement^="right"] > .tippy-arrow {
+  border-right-color: #141414 !important;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Guide (landing + modal): make screenshots larger on phones */
+@media (max-width: 640px) {
+  /* Let images breathe: reduce perceived padding by bleeding figures to card edges */
+  .guideCard .guideFigure {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+  }
+
+  .guideCard .guideShot {
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Landing card already uses 16px side padding; this keeps text readable */
+  .guideCardLanding {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  /* Projection calendar: totals-only day cells on mobile */
+  .dayCell {
+    min-height: 74px !important;
+    padding: 6px !important;
+    gap: 4px !important;
+  }
+
+  .dayCardBody {
+    display: none !important;
+  }
+
+  .dayCardFooter {
+    padding-top: 4px !important;
+    border-top: none !important;
+    gap: 2px !important;
+  }
+
+  .dayTotalsRow {
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .dayTotalsLabel {
+    display: none !important;
+  }
+
+  /* Landing page: center brand + actions on mobile */
+  .landingTopRow {
+    justify-content: center !important;
+    text-align: center;
+  }
+
+  .landingBrand {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .landingActions {
+    justify-content: center !important;
+    width: 100%;
+  }
+}
+
+/* Print / Save as PDF: show only the projection output */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* The app uses viewport-scrolling containers; those clip print output to ~1 page unless reset. */
+  .app-root,
+  .app-root main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    /* On screen this padding clears the fixed header; in print the header is hidden, so remove the gap */
+    padding-top: 0 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #projection-print-root,
+  #projection-print-root * {
+    visibility: visible;
+  }
+
+  #projection-print-root {
+    position: static !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding-top: 0 !important;
+  }
+
+  /* Header balance pills are styled for the on-screen dark theme; force readable print colors */
+  #projection-print-root .resultsHeader {
+    margin-top: 8px !important;
+    color: #000 !important;
+  }
+
+  #projection-print-root .balancePill {
+    background: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+  }
+
+  #projection-print-root .balanceLabel {
+    color: #374151 !important;
+    opacity: 1 !important;
+  }
+
+  #projection-print-root .balanceValue {
+    color: #111827 !important;
+    opacity: 1 !important;
+  }
+
+  #projection-print-root .headerArrow {
+    color: #111827 !important;
+    opacity: 1 !important;
+  }
+
+  .no-print,
+  .tippy-box,
+  .tippy-tooltip,
+  .tippy-popper,
+  [data-tippy-root] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Prefer breaking between months; avoid splitting individual day cells when possible */
+  details {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  #projection-print-root .week {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #projection-print-root .day {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
