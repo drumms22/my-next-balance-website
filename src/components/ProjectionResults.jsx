@@ -10,6 +10,8 @@ const weekdayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const styles = {
     resultsContainer: {
         width: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
         paddingBottom: 20
     },
 
@@ -20,12 +22,17 @@ const styles = {
         gap: 14,
         marginTop: 40,
         marginBottom: "clamp(18px, 4vh, 34px)",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        minWidth: 0,
+        maxWidth: "100%",
+        boxSizing: "border-box",
     },
 
     headerRow: {
         position: "relative",
         width: "100%",
+        minWidth: 0,
+        maxWidth: "100%",
         // Reserve space for the stacked action icons so header + first result card
         // don't feel cramped against them on small screens.
         paddingRight: 0,
@@ -104,6 +111,9 @@ const styles = {
         borderRadius: 10,
         marginBottom: 22,
         width: "100%",
+        maxWidth: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
     },
 
     monthSummaryRow: {
@@ -111,7 +121,24 @@ const styles = {
         justifyContent: "space-between",
         alignItems: "baseline",
         gap: 16,
-        width: "100%"
+        width: "100%",
+        minWidth: 0,
+    },
+
+    /** Narrow viewports: stack title / meta so figures are not clipped */
+    monthSummaryRowMobile: {
+        flexDirection: "column",
+        alignItems: "stretch",
+        gap: 10,
+    },
+
+    monthToggleSummaryTitleMobile: {
+        minWidth: 0,
+    },
+
+    monthToggleSummaryMetaMobile: {
+        alignItems: "flex-start",
+        width: "100%",
     },
 
     monthToggleSummary: {
@@ -119,7 +146,11 @@ const styles = {
         cursor: "pointer",
         padding: "14px 16px",
         background: "rgba(255,255,255,0.04)",
-        userSelect: "none"
+        userSelect: "none",
+        display: "block",
+        boxSizing: "border-box",
+        minWidth: 0,
+        maxWidth: "100%",
     },
 
     monthToggleSummaryTitle: {
@@ -148,15 +179,34 @@ const styles = {
         textAlign: "center",
     },
 
+    monthToggleHintMobile: {
+        whiteSpace: "normal",
+        overflowWrap: "anywhere",
+        paddingLeft: 4,
+        paddingRight: 4,
+    },
+
+    monthToggleSummaryMobilePad: {
+        padding: "12px 12px",
+    },
+
     monthToggleBody: {
         padding: 20,
-        overflowX: "auto"
+        overflowX: "auto",
+        boxSizing: "border-box",
+        minWidth: 0,
+    },
+
+    monthToggleBodyMobile: {
+        overflowX: "hidden",
+        padding: "12px 12px",
     },
 
     weekList: {
         display: "flex",
         flexDirection: "column",
         gap: 10,
+        minWidth: 0,
     },
 
     weekCard: {
@@ -164,6 +214,9 @@ const styles = {
         borderRadius: 12,
         overflow: "hidden",
         background: "rgba(0,0,0,0.10)",
+        maxWidth: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
     },
 
     weekCardSummary: {
@@ -192,6 +245,26 @@ const styles = {
         opacity: 0.9,
         fontVariantNumeric: "tabular-nums",
         whiteSpace: "nowrap",
+    },
+
+    weekCardSummaryMobile: {
+        flexDirection: "column",
+        alignItems: "stretch",
+        rowGap: 8,
+    },
+
+    weekCardTitleMobile: {
+        minWidth: 0,
+        whiteSpace: "normal",
+    },
+
+    weekCardMetaMobile: {
+        flexWrap: "wrap",
+        whiteSpace: "normal",
+        justifyContent: "flex-start",
+        columnGap: 10,
+        rowGap: 4,
+        width: "100%",
     },
 
     weekDaysList: {
@@ -229,6 +302,26 @@ const styles = {
         alignItems: "baseline",
         fontSize: 12,
         whiteSpace: "nowrap",
+    },
+
+    weekDayRowMobile: {
+        flexWrap: "wrap",
+        alignItems: "flex-start",
+        rowGap: 6,
+    },
+
+    weekDayDateMobile: {
+        minWidth: 0,
+    },
+
+    weekDayTotalsMobile: {
+        flex: "1 1 100%",
+        justifyContent: "flex-start",
+        flexWrap: "wrap",
+        whiteSpace: "normal",
+        minWidth: 0,
+        columnGap: 10,
+        rowGap: 4,
     },
 
     month: {
@@ -334,20 +427,40 @@ const styles = {
         fontWeight: "bold"
     },
     monthSummary: {
-    marginTop: 20,
-    border: "1px solid #ddd",
-    borderRadius: 10,
-    padding: 16,
-    background: "#fafafa",
-    maxWidth: 320,
-    color: "#000"
+        marginTop: 20,
+        border: "1px solid #ddd",
+        borderRadius: 10,
+        padding: 16,
+        background: "#fafafa",
+        width: "100%",
+        maxWidth: "min(320px, 100%)",
+        minWidth: 0,
+        boxSizing: "border-box",
+        color: "#000",
+        overflowWrap: "anywhere",
     },
 
     summaryRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: 8,
-    fontSize: 14
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "baseline",
+        flexWrap: "wrap",
+        gap: 6,
+        marginBottom: 8,
+        fontSize: 14,
+        minWidth: 0,
+    },
+
+    summaryRowLabel: {
+        minWidth: 0,
+        flex: "1 1 auto",
+    },
+
+    summaryRowValue: {
+        minWidth: 0,
+        textAlign: "right",
+        fontVariantNumeric: "tabular-nums",
+        overflowWrap: "anywhere",
     },
 
     divider: {
@@ -382,6 +495,20 @@ function formatMoney(n) {
   const num = typeof n === "number" ? n : Number(n);
   if (Number.isNaN(num)) return "$0";
   return `$${num.toFixed(0)}`;
+}
+
+/** Net change as % of balance at start of month; null if not meaningful (e.g. start 0 and net ≠ 0). */
+function formatNetChangePercent(startingBalance, netChange) {
+  const start = Number(startingBalance);
+  const net = Number(netChange);
+  if (!Number.isFinite(start) || !Number.isFinite(net)) return null;
+  if (start === 0) {
+    if (net === 0) return "0%";
+    return null;
+  }
+  const pct = (net / start) * 100;
+  const sign = pct > 0 ? "+" : "";
+  return `${sign}${pct.toFixed(1)}%`;
 }
 
 function groupByMonth(data) {
@@ -625,6 +752,7 @@ const ProjectionResults = ({
             const startingForMonth = index === 0 ? startingBalance : days[0].balance;
             const endingForMonth = days[days.length - 1].balance;
             const netChange = endingForMonth - startingForMonth;
+            const netPctLabel = formatNetChangePercent(startingForMonth, netChange);
             const isOpen = Boolean(openMonths[monthKey]);
 
             return (
@@ -641,22 +769,79 @@ const ProjectionResults = ({
                 }));
               }}
             >
-                <summary style={styles.monthToggleSummary}>
-                    <div style={styles.monthSummaryRow}>
-                        <div style={styles.monthToggleSummaryTitle}>{monthName}</div>
-                        <div style={styles.monthToggleSummaryMeta}>
+                <summary
+                  style={
+                    isMobileTooltip
+                      ? {
+                          ...styles.monthToggleSummary,
+                          ...styles.monthToggleSummaryMobilePad,
+                        }
+                      : styles.monthToggleSummary
+                  }
+                >
+                    <div
+                      style={
+                        isMobileTooltip
+                          ? { ...styles.monthSummaryRow, ...styles.monthSummaryRowMobile }
+                          : styles.monthSummaryRow
+                      }
+                    >
+                        <div
+                          style={
+                            isMobileTooltip
+                              ? { ...styles.monthToggleSummaryTitle, ...styles.monthToggleSummaryTitleMobile }
+                              : styles.monthToggleSummaryTitle
+                          }
+                        >
+                          {monthName}
+                        </div>
+                        <div
+                          style={
+                            isMobileTooltip
+                              ? { ...styles.monthToggleSummaryMeta, ...styles.monthToggleSummaryMetaMobile }
+                              : styles.monthToggleSummaryMeta
+                          }
+                        >
                             <div>Ending: <strong>${endingForMonth.toFixed(0)}</strong></div>
-                            <div style={netChange >= 0 ? styles.positive : styles.negative}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "baseline",
+                                gap: 6,
+                                flexWrap: "wrap",
+                                justifyContent: isMobileTooltip ? "flex-start" : "flex-end",
+                              }}
+                            >
+                              <span style={netChange >= 0 ? styles.positive : styles.negative}>
                                 {netChange >= 0 ? "+" : ""}{netChange.toFixed(0)}
+                              </span>
+                              {netPctLabel != null ? (
+                                <span style={netChange >= 0 ? styles.positive : styles.negative}>
+                                  ({netPctLabel})
+                                </span>
+                              ) : null}
                             </div>
                         </div>
                     </div>
-                    <div className="no-print" style={styles.monthToggleHint}>
+                    <div
+                      className="no-print"
+                      style={
+                        isMobileTooltip
+                          ? { ...styles.monthToggleHint, ...styles.monthToggleHintMobile }
+                          : styles.monthToggleHint
+                      }
+                    >
                       Click to {isOpen ? "Close" : "Open"}
                     </div>
                 </summary>
 
-                <div style={styles.monthToggleBody}>
+                <div
+                  style={
+                    isMobileTooltip
+                      ? { ...styles.monthToggleBody, ...styles.monthToggleBodyMobile }
+                      : styles.monthToggleBody
+                  }
+                >
                     {isMobileTooltip ? (
                       <div style={styles.weekList}>
                         {weeks.map((week, i) => {
@@ -673,9 +858,13 @@ const ProjectionResults = ({
 
                           return (
                             <details key={i} style={styles.weekCard}>
-                              <summary style={styles.weekCardSummary}>
-                                <div style={styles.weekCardTitle}>{title}</div>
-                                <div style={styles.weekCardMeta}>
+                              <summary
+                                style={{ ...styles.weekCardSummary, ...styles.weekCardSummaryMobile }}
+                              >
+                                <div style={{ ...styles.weekCardTitle, ...styles.weekCardTitleMobile }}>
+                                  {title}
+                                </div>
+                                <div style={{ ...styles.weekCardMeta, ...styles.weekCardMetaMobile }}>
                                   <span style={styles.income}>+{formatMoney(weekIncome)}</span>
                                   <span style={styles.spent}>-{formatMoney(weekSpent)}</span>
                                   <span style={{ ...styles.balance, opacity: 0.95 }}>
@@ -695,9 +884,11 @@ const ProjectionResults = ({
                                     interactive={true}
                                     placement="top"
                                   >
-                                    <div style={styles.weekDayRow}>
-                                      <div style={styles.weekDayDate}>{format(day.date, "EEE d")}</div>
-                                      <div style={styles.weekDayTotals}>
+                                    <div style={{ ...styles.weekDayRow, ...styles.weekDayRowMobile }}>
+                                      <div style={{ ...styles.weekDayDate, ...styles.weekDayDateMobile }}>
+                                        {format(day.date, "EEE d")}
+                                      </div>
+                                      <div style={{ ...styles.weekDayTotals, ...styles.weekDayTotalsMobile }}>
                                         <span style={styles.income}>+{formatMoney(day.income || 0)}</span>
                                         <span style={styles.spent}>-{formatMoney(day.spent || 0)}</span>
                                         <span style={styles.balance}>{formatMoney(day.balance)}</span>
@@ -807,20 +998,20 @@ const ProjectionResults = ({
 
                     <div style={styles.monthSummary}>
                         <div style={styles.summaryRow}>
-                            <span>Starting Balance</span>
-                            <strong>${startingForMonth.toFixed(2)}</strong>
+                            <span style={styles.summaryRowLabel}>Starting Balance</span>
+                            <strong style={{ ...styles.summaryRowValue }}>${startingForMonth.toFixed(2)}</strong>
                         </div>
 
                         <div style={styles.summaryRow}>
-                            <span>Total Income</span>
-                            <strong style={styles.positive}>
+                            <span style={styles.summaryRowLabel}>Total Income</span>
+                            <strong style={{ ...styles.summaryRowValue, ...styles.positive }}>
                             +${monthIncome.toFixed(2)}
                             </strong>
                         </div>
 
                         <div style={styles.summaryRow}>
-                            <span>Total Spent</span>
-                            <strong style={styles.negative}>
+                            <span style={styles.summaryRowLabel}>Total Spent</span>
+                            <strong style={{ ...styles.summaryRowValue, ...styles.negative }}>
                             -${monthSpent.toFixed(2)}
                             </strong>
                         </div>
@@ -828,14 +1019,15 @@ const ProjectionResults = ({
                         <div style={styles.divider} />
 
                         <div style={styles.summaryRow}>
-                            <span>Ending Balance</span>
-                            <strong>${endingForMonth.toFixed(2)}</strong>
+                            <span style={styles.summaryRowLabel}>Ending Balance</span>
+                            <strong style={{ ...styles.summaryRowValue }}>${endingForMonth.toFixed(2)}</strong>
                         </div>
 
                         <div style={styles.summaryRow}>
-                            <span>Net Change</span>
-                            <strong style={netChange >= 0 ? styles.positive : styles.negative}>
-                            {netChange >= 0 ? "+" : ""}{netChange.toFixed(2)}
+                            <span style={styles.summaryRowLabel}>Net Change</span>
+                            <strong style={{ ...styles.summaryRowValue, ...(netChange >= 0 ? styles.positive : styles.negative) }}>
+                              {netChange >= 0 ? "+" : ""}{netChange.toFixed(2)}
+                              {netPctLabel != null ? ` (${netPctLabel})` : ""}
                             </strong>
                         </div>
                     </div>

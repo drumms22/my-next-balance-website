@@ -67,9 +67,25 @@ export default function AppGuideContent({ variant = "landing" }) {
     <div className="guideContent">
       <h2 style={h}>What is My Next Balance?</h2>
       <p style={p}>
-        My Next Balance is a simple cashflow projector: you tell it what you earn, what you spend,
-        and when bills hit — then it walks forward day-by-day and shows how your balance changes.
+        My Next Balance is a simple <strong>cash flow calculator</strong> and{" "}
+        <strong>balance projection</strong> tool: you tell it what you earn, what you spend, and when
+        bills hit — then it walks forward <strong>day-by-day</strong> and shows your{" "}
+        <strong>projected balance</strong> after each day&apos;s inflows and outflows.
       </p>
+
+      <section style={section}>
+        <h3 style={sectionTitle}>What you can use it for</h3>
+        <p style={p}>
+          Use it as a <strong>cash flow forecast</strong> when you want to know whether you&apos;ll stay
+          positive before payday, after rent, or during a tight month. It&apos;s built for people who think
+          in <strong>bank balance</strong> terms — not category budgets — and want a calendar of when money
+          moves.
+        </p>
+        <p style={{ ...p, marginBottom: 0 }}>
+          Typical uses: planning around <strong>recurring bills</strong>, irregular income, one-off
+          expenses, and answering &quot;what if I spend X this week?&quot; without linking a bank account.
+        </p>
+      </section>
 
       <figure className="guideFigure" style={{ margin: "14px 0 0" }}>
         <img
@@ -160,6 +176,35 @@ export default function AppGuideContent({ variant = "landing" }) {
             Use <strong>Backups</strong> to keep named snapshots while you experiment.
           </li>
         </ul>
+      </section>
+
+      <section style={section}>
+        <h3 style={sectionTitle}>Common questions</h3>
+        <dl style={{ margin: 0, fontSize: 15, lineHeight: 1.65, opacity: 0.92 }}>
+          <dt style={{ fontWeight: 800, marginTop: 12, marginBottom: 4 }}>Is this a budget app?</dt>
+          <dd style={{ margin: "0 0 8px" }}>
+            It&apos;s closer to a <strong>balance projector</strong>: it shows how your total balance moves
+            over time from income and expenses you enter — not envelope or category budgeting.
+          </dd>
+          <dt style={{ fontWeight: 800, marginTop: 12, marginBottom: 4 }}>
+            How is &quot;balance projection&quot; different from a spreadsheet?
+          </dt>
+          <dd style={{ margin: "0 0 8px" }}>
+            The app rolls forward automatically day-by-day, ties recurring items to calendar dates, and
+            surfaces results in a month/week view so you can sanity-check your{" "}
+            <strong>projected balance</strong> without building formulas yourself.
+          </dd>
+          <dt style={{ fontWeight: 800, marginTop: 12, marginBottom: 4 }}>Do you see my bank data?</dt>
+          <dd style={{ margin: "0 0 8px" }}>
+            No account linking. Numbers you enter stay in your browser unless you export or print them
+            yourself.
+          </dd>
+          <dt style={{ fontWeight: 800, marginTop: 12, marginBottom: 4 }}>Can I save or share a projection?</dt>
+          <dd style={{ margin: 0 }}>
+            Yes — use <strong>PDF</strong> (print) from the results header, or <strong>Backups</strong> to
+            download a JSON snapshot of your configuration.
+          </dd>
+        </dl>
       </section>
     </div>
   );

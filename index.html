@@ -8,7 +8,7 @@
   
     <meta
       name="description"
-      content="Free cash flow calculator to project your balance day-by-day. Add income, bills, and expenses to see exactly how much money you’ll have after bills—no sign-up required."
+      content="Free cash flow calculator and balance projection: forecast your bank balance day-by-day with income, bills, and recurring expenses. See your projected balance after bills—no sign-up."
     />
   
     <meta name="robots" content="index, follow" />
@@ -31,26 +31,85 @@
     />
     <meta
       property="og:description"
-      content="Project your balance day-by-day with income, bills, and expenses. See exactly how much money you’ll have after bills—no sign-up required."
+      content="Balance projection and cash flow forecast in your browser: income, bills, and recurring expenses on a calendar—see your projected balance after bills. Free, no sign-up."
     />
-    <meta property="og:image" content="https://mynextbalance.com/icon.png" />
-    <meta property="og:image:alt" content="My Next Balance app icon" />
+    <meta property="og:image" content="https://mynextbalance.com/og-image.jpg" />
+    <meta
+      property="og:image:alt"
+      content="My Next Balance — cash flow calculator and balance projection preview"
+    />
     <meta property="og:locale" content="en_US" />
   
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
       content="Cash Flow Calculator — Project Your Balance After Bills"
     />
     <meta
       name="twitter:description"
-      content="Free tool to project your balance day-by-day with income, bills, and spending."
+      content="Cash flow calculator and balance projection—day-by-day forecast with bills and income. Free, no sign-up."
     />
-    <meta name="twitter:image" content="https://mynextbalance.com/icon.png" />
+    <meta name="twitter:image" content="https://mynextbalance.com/og-image.jpg" />
+
+    <!-- First-paint copy for crawlers / no-JS; keep in sync with AppGuideContent + meta description. -->
+    <style>
+      .seo-first-paint {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "My Next Balance",
+        "url": "https://mynextbalance.com/",
+        "description": "Free cash flow calculator and balance projection. Forecast your bank balance day-by-day with income, recurring bills, and expenses—see your projected balance after bills.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web browser",
+        "browserRequirements": "Requires JavaScript",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Day-by-day balance projection and cash flow forecast",
+          "Recurring income and expenses on a calendar",
+          "Multi-month projection with printable results",
+          "Runs locally in your browser—no account required"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <aside class="seo-first-paint" aria-hidden="true">
+      <h1>My Next Balance — cash flow calculator and balance projection</h1>
+      <p>
+        Free cash flow calculator and balance projection: forecast your bank balance day-by-day with
+        income, bills, and recurring expenses. See your projected balance after bills. No sign-up; runs in
+        your browser.
+      </p>
+      <p>
+        Add starting balance and dates in Setup, recurring expenses on the calendar, then run a
+        multi-month projection. Explore results by month and week, print to PDF, or save configuration
+        backups as JSON.
+      </p>
+      <p>
+        Common questions: it is a balance projector (not envelope budgeting), it does not link to your bank,
+        and you can export or print projections yourself.
+      </p>
+    </aside>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

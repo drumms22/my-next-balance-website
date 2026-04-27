@@ -1,10 +1,13 @@
 import React from "react";
 import AppGuideContent from "../components/guide/AppGuideContent";
+import SiteFooter from "../components/SiteFooter";
 
 const page = {
   minHeight: "100vh",
   boxSizing: "border-box",
-  padding: "28px 18px 40px",
+  padding: "28px 0 0",
+  display: "flex",
+  flexDirection: "column",
   background: "radial-gradient(1200px 700px at 50% 0%, rgba(80, 80, 80, 0.35), rgba(20, 20, 20, 1))",
   color: "rgba(255, 255, 255, 0.92)",
 };
@@ -12,6 +15,10 @@ const page = {
 const shell = {
   maxWidth: 980,
   margin: "0 auto",
+  flex: "1 0 auto",
+  width: "100%",
+  padding: "0 18px 40px",
+  boxSizing: "border-box",
 };
 
 const topRow = {
@@ -81,6 +88,15 @@ const btnGhost = {
   border: "2px solid rgba(255, 255, 255, 0.72)",
 };
 
+const tagline = {
+  margin: "0 0 20px",
+  maxWidth: 640,
+  fontSize: "clamp(15px, 2.4vw, 17px)",
+  lineHeight: 1.55,
+  fontWeight: 600,
+  opacity: 0.88,
+};
+
 const card = {
   border: "1px solid rgba(128, 128, 128, 0.35)",
   background: "rgba(22, 22, 22, 0.72)",
@@ -113,10 +129,17 @@ export default function LandingPage({ onContinue }) {
           </div>
         </div>
 
+        <p style={tagline}>
+          Free <strong style={{ fontWeight: 700, opacity: 1 }}>cash flow calculator</strong> and{" "}
+          <strong style={{ fontWeight: 700, opacity: 1 }}>balance projection</strong> — forecast your bank
+          balance day-by-day after bills and income. No sign-up.
+        </p>
+
         <div className="guideCard guideCardLanding" style={card}>
           <AppGuideContent variant="landing" />
         </div>
       </div>
+      <SiteFooter paddingX={14} />
     </div>
   );
 }

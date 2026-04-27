@@ -10,6 +10,7 @@ import {
 import ProjectionResults from "../components/ProjectionResults";
 
 import ConfigVersions from "../components/ConfigVersions";
+import SiteFooter from "../components/SiteFooter";
 
 import RecurringExpensesCalendar from "../components/RecurringExpensesCalendar";
 import FinancialSetupPanel from "../components/FinancialSetupPanel";
@@ -266,23 +267,38 @@ const headerInner = {
   // Let the header height be measured naturally (ResizeObserver sets headerH).
 };
 
+/** Page scrolls as a whole; padding reserves space under the fixed header. */
 const scrollBody = (topOffsetPx) => ({
   position: "relative",
-  //height: "100vh",
   paddingTop: topOffsetPx,
-  overflow: "hidden",
+  boxSizing: "border-box",
+  overflowX: "hidden",
+});
+
+/**
+ * Column: projection grows naturally (window scroll). minHeight keeps the footer
+ * at the bottom of the viewport when there is little projection content.
+ */
+const scrollContent = (topOffsetPx) => ({
+  display: "flex",
+  flexDirection: "column",
+  minHeight: `calc(100svh - ${topOffsetPx}px)`,
+  minWidth: 0,
+  width: "100%",
+  paddingLeft: MAIN_CONTENT_PADDING_X_PX,
+  paddingRight: MAIN_CONTENT_PADDING_X_PX,
+  paddingBottom: 0,
   boxSizing: "border-box",
 });
 
-const scrollContent = (topOffsetPx) => ({
-  height: `calc(100vh - ${topOffsetPx}px)`,
-  overflowY: "auto",
-  overflowX: "hidden",
-  paddingLeft: MAIN_CONTENT_PADDING_X_PX,
-  paddingRight: MAIN_CONTENT_PADDING_X_PX,
-  paddingBottom: 48,
+/** Grows when main is taller than content so short pages still fill the screen above the footer */
+const mainScrollRegion = {
+  flex: "1 1 auto",
+  minWidth: 0,
+  width: "100%",
+  paddingBottom: 16,
   boxSizing: "border-box",
-});
+};
 
 const Home = ({ onOpenGuide, guideModalOpen = false }) => {
   const isMobileHeader = useIsMobileHeader();
@@ -623,18 +639,21 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
       </header>
 
       <main style={scrollContent(headerH)}>
-        <ProjectionResults
-          startingBalance={config.startingBalance}
-          data={results}
-          isRunning={isRunning}
-          hasRun={hasRun}
-          monthsToProject={monthsToProject}
-          setMonthsToProject={setMonthsToProject}
-          run={handleRun}
-          onOpenBackups={() => setBackupsOpen(true)}
-          onOpenUpload={() => setImportModalOpen(true)}
-          onClearProjection={handleClearProjection}
-        />
+        <div style={mainScrollRegion}>
+          <ProjectionResults
+            startingBalance={config.startingBalance}
+            data={results}
+            isRunning={isRunning}
+            hasRun={hasRun}
+            monthsToProject={monthsToProject}
+            setMonthsToProject={setMonthsToProject}
+            run={handleRun}
+            onOpenBackups={() => setBackupsOpen(true)}
+            onOpenUpload={() => setImportModalOpen(true)}
+            onClearProjection={handleClearProjection}
+          />
+        </div>
+        <SiteFooter paddingX={0} trailingReservePx={isMobileHeader ? 52 : 0} />
       </main>
 
       <div id="recurring-expenses-rail" className="no-print">

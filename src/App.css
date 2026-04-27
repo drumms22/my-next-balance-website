@@ -150,10 +150,11 @@
     overflow: visible !important;
   }
 
-  /* The app uses viewport-scrolling containers; those clip print output to ~1 page unless reset. */
+  /* Reset viewport-height / min-height shell so print output is not clipped. */
   .app-root,
   .app-root main {
     height: auto !important;
+    min-height: auto !important;
     max-height: none !important;
     overflow: visible !important;
     /* On screen this padding clears the fixed header; in print the header is hidden, so remove the gap */
