@@ -298,6 +298,8 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
   const [leftRailOpen, setLeftRailOpen] = useState(false);
   const [rightRailOpen, setRightRailOpen] = useState(false);
   const [backupsOpen, setBackupsOpen] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const importFileRef = useRef(null);
   const headerRef = useRef(null);
   const [headerH, setHeaderH] = useState(220);
   const [config, setLocalConfig] = useState(() => {
@@ -338,11 +340,13 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
 
   useEffect(() => {
     document.body.style.overflow =
-      backupsOpen || leftRailOpen || rightRailOpen || guideModalOpen ? "hidden" : "";
+      backupsOpen || importModalOpen || leftRailOpen || rightRailOpen || guideModalOpen
+        ? "hidden"
+        : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [backupsOpen, leftRailOpen, rightRailOpen, guideModalOpen]);
+  }, [backupsOpen, importModalOpen, leftRailOpen, rightRailOpen, guideModalOpen]);
 
   useLayoutEffect(() => {
     const el = headerRef.current;
@@ -366,6 +370,10 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
         onOpenGuide?.(false);
         return;
       }
+      if (importModalOpen) {
+        setImportModalOpen(false);
+        return;
+      }
       if (backupsOpen) {
         setBackupsOpen(false);
         return;
@@ -375,7 +383,7 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [backupsOpen, guideModalOpen, onOpenGuide]);
+  }, [backupsOpen, importModalOpen, guideModalOpen, onOpenGuide]);
 
   const handleAlert = (type, message) => {
     setShowAlert({
@@ -388,6 +396,52 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
   const handleRestoreSavedConfig = (saved) => {
     setLocalConfig(cloneConfig(saved));
     handleAlert("success", "Loaded saved version");
+  };
+
+  const handleImportJsonFile = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result ?? ""));
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error("The file must contain one JSON object (not an array).");
+        }
+        if (
+          !window.confirm(
+            "Replace your current setup with this file? This browser’s working data will be overwritten."
+          )
+        ) {
+          return;
+        }
+        setLocalConfig(normalizeFinanceConfig(parsed));
+        setResults([]);
+        setHasRun(false);
+        setIsRunning(false);
+        handleAlert("success", "Configuration imported");
+        setImportModalOpen(false);
+      } catch (err) {
+        handleAlert("danger", err?.message || "Could not read that file.");
+      }
+    };
+    reader.onerror = () => handleAlert("danger", "Could not read that file.");
+    reader.readAsText(file);
+  };
+
+  const downloadConfigJson = () => {
+    try {
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mynextbalance-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      handleAlert("success", "Download started");
+    } catch {
+      handleAlert("danger", "Download failed");
+    }
   };
 
   const handleCleanSlate = () => {
@@ -410,7 +464,7 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
   };
 
   const railBackdropVisible =
-    (leftRailOpen || rightRailOpen) && !backupsOpen;
+    (leftRailOpen || rightRailOpen) && !backupsOpen && !importModalOpen;
 
   const AlertMess = ({ showAlert, onClose }) => {
     useEffect(() => {
@@ -450,7 +504,8 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
 
   // Keep rails + edge tabs above the fixed header, but tuck them under overlays/backdrops
   // so the other tab can't be clicked while a panel is open.
-  const edgeTabZ = guideModalOpen || railBackdropVisible || backupsOpen ? 30 : 200;
+  const edgeTabZ =
+    guideModalOpen || railBackdropVisible || backupsOpen || importModalOpen ? 30 : 200;
   const edgeTabLeftZ = { ...expensesTab, zIndex: edgeTabZ };
   const edgeTabRightZ = { ...setupTab, zIndex: edgeTabZ };
 
@@ -577,6 +632,7 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
           setMonthsToProject={setMonthsToProject}
           run={handleRun}
           onOpenBackups={() => setBackupsOpen(true)}
+          onOpenUpload={() => setImportModalOpen(true)}
           onClearProjection={handleClearProjection}
         />
       </main>
@@ -616,6 +672,115 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
               onCleanSlate={handleCleanSlate}
               onAlert={handleAlert}
             />
+          </div>
+        </div>
+      ) : null}
+
+      {importModalOpen ? (
+        <div className="no-print" style={backupsOverlay} onClick={() => setImportModalOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="import-config-title"
+            style={{ ...backupsDialog, maxWidth: "min(480px, 94vw)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="import-config-title" style={{ margin: "0 0 12px", fontSize: 18, fontWeight: 800 }}>
+              Upload saved setup
+            </h2>
+            <p style={{ margin: "0 0 10px", fontSize: 14, lineHeight: 1.55, opacity: 0.88 }}>
+              Import a <strong style={{ fontWeight: 600 }}>JSON</strong> file from this app (for example,
+              a backup you downloaded on another device). Your data stays in the browser until you choose a
+              file; nothing is uploaded to our servers.
+            </p>
+            <ul
+              style={{
+                margin: "0 0 16px",
+                paddingLeft: 18,
+                fontSize: 13,
+                lineHeight: 1.5,
+                opacity: 0.82,
+              }}
+            >
+              <li>The file must be valid JSON with a single object (not a list).</li>
+              <li>Importing replaces your current working setup after you confirm.</li>
+              <li>After import, run the projection again if you want updated charts.</li>
+            </ul>
+            <input
+              ref={importFileRef}
+              type="file"
+              accept=".json,application/json"
+              className="no-print"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleImportJsonFile(f);
+                e.target.value = "";
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <button
+                type="button"
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: "#2563eb",
+                  color: "white",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  fontFamily: "inherit",
+                }}
+                onClick={() => importFileRef.current?.click()}
+              >
+                Choose file…
+              </button>
+              <button
+                type="button"
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(128,128,128,0.45)",
+                  background: "transparent",
+                  color: "rgba(255,255,255,0.88)",
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                }}
+                onClick={downloadConfigJson}
+              >
+                Download current JSON
+              </button>
+            </div>
+            <button
+              type="button"
+              style={{
+                marginTop: 14,
+                width: "100%",
+                padding: "10px 14px",
+                borderRadius: 8,
+                border: "1px solid rgba(128,128,128,0.45)",
+                background: "transparent",
+                color: "rgba(255,255,255,0.85)",
+                cursor: "pointer",
+                fontWeight: 600,
+                fontSize: 14,
+                fontFamily: "inherit",
+              }}
+              onClick={() => setImportModalOpen(false)}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       ) : null}

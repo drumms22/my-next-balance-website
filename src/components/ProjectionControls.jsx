@@ -1,12 +1,32 @@
 import React from "react";
 
-const row = {
+const wrap = {
+  marginBottom: 28,
+  marginTop: 20,
+  width: "100%",
+  maxWidth: 560,
+  marginLeft: "auto",
+  marginRight: "auto",
+  boxSizing: "border-box",
+};
+
+const primaryRow = {
   display: "flex",
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
   flexWrap: "wrap",
   gap: 12,
+};
+
+const secondaryRow = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "stretch",
+  justifyContent: "center",
+  gap: 12,
+  marginTop: 12,
+  width: "100%",
 };
 
 const monthsSelect = {
@@ -36,15 +56,23 @@ const actionBtn = {
 
 const backupsBtn = {
   ...actionBtn,
+  flex: "1 1 0",
+  minWidth: 0,
   backgroundColor: "transparent",
   color: "rgba(255, 255, 255, 0.92)",
   border: "2px solid rgba(255, 255, 255, 0.72)",
 };
 
-const ProjectionControls = ({ months, setMonths, run, onOpenBackups }) => {
+const ProjectionControls = ({
+  months,
+  setMonths,
+  run,
+  onOpenBackups,
+  onOpenUpload = () => {},
+}) => {
   return (
-    <div style={{ marginBottom: 28, marginTop: 20 }}>
-      <div style={row}>
+    <div style={wrap}>
+      <div style={primaryRow}>
         <label htmlFor="months-to-project" style={{ fontSize: 18, whiteSpace: "nowrap" }}>
           Months to Project:
         </label>
@@ -65,9 +93,14 @@ const ProjectionControls = ({ months, setMonths, run, onOpenBackups }) => {
         <button type="button" onClick={run} style={actionBtn}>
           Run Projection
         </button>
+      </div>
 
+      <div style={secondaryRow}>
         <button type="button" onClick={onOpenBackups} style={backupsBtn}>
           Backups
+        </button>
+        <button type="button" onClick={onOpenUpload} style={backupsBtn}>
+          Upload
         </button>
       </div>
     </div>

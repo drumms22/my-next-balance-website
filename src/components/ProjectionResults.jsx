@@ -405,6 +405,7 @@ const ProjectionResults = ({
   setMonthsToProject,
   run,
   onOpenBackups,
+  onOpenUpload,
   onClearProjection,
 }) => {
   const printSnapshotRef = useRef(null);
@@ -480,6 +481,7 @@ const ProjectionResults = ({
           setMonths={setMonthsToProject}
           run={run}
           onOpenBackups={onOpenBackups}
+          onOpenUpload={onOpenUpload}
         />
       </div>
     );
@@ -512,6 +514,7 @@ const ProjectionResults = ({
           setMonths={setMonthsToProject}
           run={run}
           onOpenBackups={onOpenBackups}
+          onOpenUpload={onOpenUpload}
         />
         <div style={{ opacity: 0.8, textAlign: "center" }}>No results to display.</div>
       </div>
