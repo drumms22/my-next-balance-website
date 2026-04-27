@@ -71,7 +71,8 @@ const remove = (i) => {
             type="number"
             min="1"
             max="12"
-            value={month}
+            value={Number(month) === 0 ? "" : month}
+            onFocus={() => setMonth((prev) => (Number(prev) === 0 ? "" : prev))}
             onChange={e => setMonth(e.target.value)}
             />
         </div>
@@ -83,7 +84,8 @@ const remove = (i) => {
             type="number"
             min="1"
             max="31"
-            value={day}
+            value={Number(day) === 0 ? "" : day}
+            onFocus={() => setDay((prev) => (Number(prev) === 0 ? "" : prev))}
             onChange={e => setDay(e.target.value)}
             />
         </div>
@@ -94,7 +96,8 @@ const remove = (i) => {
             style={styles.small}
             type="number"
             placeholder="-1 forever"
-            value={howMany}
+            value={Number(howMany) === 0 ? "" : howMany}
+            onFocus={() => setHowMany((prev) => (Number(prev) === 0 ? "" : prev))}
             onChange={e => setHowMany(e.target.value)}
             />
         </div>

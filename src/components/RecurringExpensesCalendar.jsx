@@ -660,10 +660,16 @@ export default function RecurringExpensesCalendar({
                           inputMode="decimal"
                           step="any"
                           value={draftExpense.amount}
+                          onFocus={() =>
+                            setDraftExpense((prev) => ({
+                              ...prev,
+                              amount: prev.amount === 0 ? "" : prev.amount,
+                            }))
+                          }
                           onChange={(e) =>
                             setDraftExpense((prev) => ({
                               ...prev,
-                              amount: Number(e.target.value),
+                              amount: e.target.value === "" ? "" : Number(e.target.value),
                             }))
                           }
                         />
@@ -675,10 +681,16 @@ export default function RecurringExpensesCalendar({
                           type="number"
                           step="1"
                           value={draftExpense.remaining}
+                          onFocus={() =>
+                            setDraftExpense((prev) => ({
+                              ...prev,
+                              remaining: prev.remaining === 0 ? "" : prev.remaining,
+                            }))
+                          }
                           onChange={(e) =>
                             setDraftExpense((prev) => ({
                               ...prev,
-                              remaining: Number(e.target.value),
+                              remaining: e.target.value === "" ? "" : Number(e.target.value),
                             }))
                           }
                         />

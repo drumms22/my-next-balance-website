@@ -112,7 +112,8 @@ export default function ExtraIncomeForm({ config, setConfig }) {
             type="number"
             min="1"
             max="12"
-            value={month}
+            value={Number(month) === 0 ? "" : month}
+            onFocus={() => setMonth((prev) => (Number(prev) === 0 ? "" : prev))}
             onChange={e => setMonth(e.target.value)}
             />
         </div>
@@ -124,7 +125,8 @@ export default function ExtraIncomeForm({ config, setConfig }) {
             type="number"
             min="1"
             max="31"
-            value={day}
+            value={Number(day) === 0 ? "" : day}
+            onFocus={() => setDay((prev) => (Number(prev) === 0 ? "" : prev))}
             onChange={e => setDay(e.target.value)}
             />
         </div>

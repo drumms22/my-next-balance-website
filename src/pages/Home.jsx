@@ -426,13 +426,19 @@ const Home = ({ onOpenGuide, guideModalOpen = false }) => {
         className="no-print"
         style={{
           position: "fixed",
-          top: "10px",
+          top: "max(10px, env(safe-area-inset-top, 0px))",
           left: "50%",
           transform: "translateX(-50%)",
           backgroundColor: showAlert.type === "danger" ? "#ff0000ff" : "#3b9a00ff",
           borderRadius: "10px",
-          fontSize: "30px",
-          padding: 20,
+          fontSize: "clamp(14px, 4.6vw, 22px)",
+          lineHeight: 1.25,
+          padding: "clamp(10px, 2.6vw, 16px) clamp(12px, 3.2vw, 18px)",
+          maxWidth: "min(560px, calc(100vw - 24px))",
+          width: "max-content",
+          textAlign: "center",
+          overflowWrap: "anywhere",
+          boxSizing: "border-box",
           zIndex: 200,
           border: "2px solid #fff",
         }}

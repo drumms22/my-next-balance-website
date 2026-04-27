@@ -200,8 +200,12 @@ export default function RecurringExpensesList({ config, setConfig, isOpen, onClo
   const handleChange = (day, index, field, value) => {
     const updated = structuredClone(draftDays);
     if (field === "amount" || field === "remaining") {
-      const n = Number(value);
-      updated[day].expenses[index][field] = Number.isNaN(n) ? 0 : n;
+      if (value === "") {
+        updated[day].expenses[index][field] = "";
+      } else {
+        const n = Number(value);
+        updated[day].expenses[index][field] = Number.isNaN(n) ? 0 : n;
+      }
     } else {
       updated[day].expenses[index][field] = value;
     }
@@ -255,9 +259,20 @@ const addExpense = day => {
   /* ---------------- save ---------------- */
 
   const saveChanges = () => {
+    const normalizedDays = structuredClone(draftDays);
+    for (const dayKey of Object.keys(normalizedDays)) {
+      const day = normalizedDays[dayKey];
+      if (!day?.expenses) continue;
+      for (const exp of day.expenses) {
+        exp.amount = Number(exp.amount) || 0;
+        if (typeof exp.remaining !== "number") {
+          exp.remaining = Number(exp.remaining) || 0;
+        }
+      }
+    }
     setConfig(prev => ({
       ...prev,
-      days: draftDays
+      days: normalizedDays
     }));
     setIsEditing(false);
   };
@@ -418,6 +433,9 @@ const addExpense = day => {
                             step="any"
                             min="0"
                             value={expense.amount}
+                            onFocus={() => {
+                              if (expense.amount === 0) handleChange(day, i, "amount", "");
+                            }}
                             onChange={(e) => handleChange(day, i, "amount", e.target.value)}
                           />
                         </div>
@@ -432,6 +450,9 @@ const addExpense = day => {
                           type="number"
                           step="1"
                           value={expense.remaining}
+                          onFocus={() => {
+                            if (expense.remaining === 0) handleChange(day, i, "remaining", "");
+                          }}
                           onChange={(e) => handleChange(day, i, "remaining", e.target.value)}
                         />
                         <span style={styles.fieldHint}>

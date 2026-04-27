@@ -346,7 +346,11 @@ export default function FinancialSetupPanel({
   };
 
   const saveAll = () => {
-    setConfig(draft);
+    setConfig({
+      ...draft,
+      startingBalance: Number(draft.startingBalance) || 0,
+      weeklySpending: Number(draft.weeklySpending) || 0,
+    });
   };
 
   const revertAll = () => {
@@ -416,10 +420,16 @@ export default function FinancialSetupPanel({
         payload.month = Number(payload.month) || 1;
         payload.day = Number(payload.day) || 1;
       }
+      payload.amount = Number(payload.amount) || 0;
+      if (payload.frequency === "monthly") {
+        payload.day = Number(payload.day) || 1;
+      }
     } else if (MONTH_DAY_PICKER_EDIT_TYPES.has(type)) {
       payload = deepClone(editorValue);
       payload.month = Number(payload.month) || 1;
       payload.day = Number(payload.day) || 1;
+      if ("amount" in payload) payload.amount = Number(payload.amount) || 0;
+      if ("howMany" in payload) payload.howMany = Number(payload.howMany) || -1;
     } else {
       payload = editorValue;
     }
@@ -632,11 +642,17 @@ export default function FinancialSetupPanel({
                 style={styles.control}
                 type="number"
                 inputMode="decimal"
-                value={draft.startingBalance ?? 0}
+                value={draft.startingBalance ?? ""}
+                onFocus={() =>
+                  setDraft((prev) => ({
+                    ...prev,
+                    startingBalance: prev.startingBalance === 0 ? "" : prev.startingBalance,
+                  }))
+                }
                 onChange={(e) =>
                   setDraft((prev) => ({
                     ...prev,
-                    startingBalance: Number(e.target.value),
+                    startingBalance: e.target.value === "" ? "" : Number(e.target.value),
                   }))
                 }
               />
@@ -648,11 +664,17 @@ export default function FinancialSetupPanel({
                   style={styles.control}
                   type="number"
                   inputMode="decimal"
-                  value={draft.weeklySpending ?? 0}
+                  value={draft.weeklySpending ?? ""}
+                  onFocus={() =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      weeklySpending: prev.weeklySpending === 0 ? "" : prev.weeklySpending,
+                    }))
+                  }
                   onChange={(e) =>
                     setDraft((prev) => ({
                       ...prev,
-                      weeklySpending: Number(e.target.value),
+                      weeklySpending: e.target.value === "" ? "" : Number(e.target.value),
                     }))
                   }
                 />
@@ -776,9 +798,18 @@ export default function FinancialSetupPanel({
                         style={styles.control}
                         type="number"
                         inputMode="decimal"
-                        value={editorValue.amount ?? 0}
+                      value={editorValue.amount ?? ""}
+                      onFocus={() =>
+                        setEditorValue((p) => ({
+                          ...p,
+                          amount: p.amount === 0 ? "" : p.amount,
+                        }))
+                      }
                         onChange={(e) =>
-                          setEditorValue((p) => ({ ...p, amount: Number(e.target.value) }))
+                        setEditorValue((p) => ({
+                          ...p,
+                          amount: e.target.value === "" ? "" : Number(e.target.value),
+                        }))
                         }
                       />
                     </div>
@@ -878,8 +909,19 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     inputMode="decimal"
-                    value={editorValue.amount ?? 0}
-                    onChange={(e) => setEditorValue((p) => ({ ...p, amount: Number(e.target.value) }))}
+                    value={editorValue.amount ?? ""}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: p.amount === 0 ? "" : p.amount,
+                      }))
+                    }
+                    onChange={(e) =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -936,7 +978,12 @@ export default function FinancialSetupPanel({
                       min="1"
                       max="31"
                       value={editorValue.day ?? 1}
-                      onChange={(e) => setEditorValue((p) => ({ ...p, day: Number(e.target.value) }))}
+                      onChange={(e) =>
+                        setEditorValue((p) => ({
+                          ...p,
+                          day: e.target.value === "" ? "" : Number(e.target.value),
+                        }))
+                      }
                     />
                   </div>
                 ) : (
@@ -1082,8 +1129,19 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     inputMode="decimal"
-                    value={editorValue.amount ?? 0}
-                    onChange={(e) => setEditorValue((p) => ({ ...p, amount: Number(e.target.value) }))}
+                    value={editorValue.amount ?? ""}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: p.amount === 0 ? "" : p.amount,
+                      }))
+                    }
+                    onChange={(e) =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -1104,8 +1162,17 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     value={editorValue.howMany ?? -1}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        howMany: p.howMany === 0 ? "" : p.howMany,
+                      }))
+                    }
                     onChange={(e) =>
-                      setEditorValue((p) => ({ ...p, howMany: Number(e.target.value) }))
+                      setEditorValue((p) => ({
+                        ...p,
+                        howMany: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
                     }
                   />
                 </div>
@@ -1180,8 +1247,19 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     inputMode="decimal"
-                    value={editorValue.amount ?? 0}
-                    onChange={(e) => setEditorValue((p) => ({ ...p, amount: Number(e.target.value) }))}
+                    value={editorValue.amount ?? ""}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: p.amount === 0 ? "" : p.amount,
+                      }))
+                    }
+                    onChange={(e) =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -1265,8 +1343,19 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     inputMode="decimal"
-                    value={editorValue.amount ?? 0}
-                    onChange={(e) => setEditorValue((p) => ({ ...p, amount: Number(e.target.value) }))}
+                    value={editorValue.amount ?? ""}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: p.amount === 0 ? "" : p.amount,
+                      }))
+                    }
+                    onChange={(e) =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        amount: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
                 <div />
@@ -1362,7 +1451,18 @@ export default function FinancialSetupPanel({
                     style={styles.control}
                     type="number"
                     value={editorValue.howMany ?? -1}
-                    onChange={(e) => setEditorValue((p) => ({ ...p, howMany: Number(e.target.value) }))}
+                    onFocus={() =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        howMany: p.howMany === 0 ? "" : p.howMany,
+                      }))
+                    }
+                    onChange={(e) =>
+                      setEditorValue((p) => ({
+                        ...p,
+                        howMany: e.target.value === "" ? "" : Number(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               </div>

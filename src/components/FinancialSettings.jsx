@@ -70,8 +70,9 @@ export default function FinancialSettings({ config, setConfig }) {
           <input
             style={styles.input}
             type="number"
-            value={startingBalance}
+            value={Number(startingBalance) === 0 ? "" : startingBalance}
             onChange={e => setStartingBalance(e.target.value)}
+            onFocus={() => setStartingBalance((prev) => (Number(prev) === 0 ? "" : prev))}
           />
         </div>
 
@@ -80,8 +81,9 @@ export default function FinancialSettings({ config, setConfig }) {
           <input
             style={styles.input}
             type="number"
-            value={weeklySpending}
+            value={Number(weeklySpending) === 0 ? "" : weeklySpending}
             onChange={e => setWeeklySpending(e.target.value)}
+            onFocus={() => setWeeklySpending((prev) => (Number(prev) === 0 ? "" : prev))}
           />
         </div>
 
