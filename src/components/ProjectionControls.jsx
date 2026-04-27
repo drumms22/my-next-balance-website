@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const wrap = {
   marginBottom: 28,
@@ -19,9 +19,8 @@ const primaryRow = {
   gap: 12,
 };
 
-const secondaryRow = {
+const secondaryRowBase = {
   display: "flex",
-  flexDirection: "row",
   alignItems: "stretch",
   justifyContent: "center",
   gap: 12,
@@ -54,14 +53,31 @@ const actionBtn = {
   boxSizing: "border-box",
 };
 
-const backupsBtn = {
+const backupsBtnBase = {
   ...actionBtn,
-  flex: "1 1 0",
-  minWidth: 0,
   backgroundColor: "transparent",
   color: "rgba(255, 255, 255, 0.92)",
   border: "2px solid rgba(255, 255, 255, 0.72)",
 };
+
+/** Matches Run / Backups / Upload width on narrow screens */
+const MOBILE_ACTION_BTN_WIDTH = "min(260px, calc(100% - 8px))";
+
+function useStackSecondaryButtons() {
+  const [stack, setStack] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const update = () => setStack(Boolean(mq.matches));
+    update();
+    if (mq.addEventListener) {
+      mq.addEventListener("change", update);
+      return () => mq.removeEventListener("change", update);
+    }
+    mq.addListener(update);
+    return () => mq.removeListener(update);
+  }, []);
+  return stack;
+}
 
 const ProjectionControls = ({
   months,
@@ -70,6 +86,33 @@ const ProjectionControls = ({
   onOpenBackups,
   onOpenUpload = () => {},
 }) => {
+  const stackSecondary = useStackSecondaryButtons();
+  const secondaryRow = {
+    ...secondaryRowBase,
+    flexDirection: stackSecondary ? "column" : "row",
+    alignItems: stackSecondary ? "center" : "stretch",
+  };
+  const mobileBtnSizing = stackSecondary
+    ? {
+        flex: "none",
+        width: MOBILE_ACTION_BTN_WIDTH,
+        minWidth: 168,
+        alignSelf: "center",
+      }
+    : null;
+
+  const runBtnStyle = {
+    ...actionBtn,
+    ...(mobileBtnSizing || {}),
+  };
+
+  const backupsBtn = {
+    ...backupsBtnBase,
+    ...(stackSecondary
+      ? mobileBtnSizing
+      : { flex: "1 1 0", minWidth: 0 }),
+  };
+
   return (
     <div style={wrap}>
       <div style={primaryRow}>
@@ -90,7 +133,7 @@ const ProjectionControls = ({
           ))}
         </select>
 
-        <button type="button" onClick={run} style={actionBtn}>
+        <button type="button" onClick={run} style={runBtnStyle}>
           Run Projection
         </button>
       </div>
