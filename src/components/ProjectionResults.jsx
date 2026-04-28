@@ -3,8 +3,14 @@ import { flushSync } from "react-dom";
 import { format, getDay } from "date-fns";
 import ToolTip from "./ToolTip";
 import DayTooltip from "./DayTooltip";
+import ExpenseTypeDot from "./ExpenseTypeDot";
 import ProjectionControls from "./ProjectionControls";
 import loadingImg from "../assets/images/loading.gif";
+import {
+  EXPENSE_TYPE_BADGES,
+  getOrderedUniqueExpenseTypes,
+  PROJECTION_EXPENSE_LEGEND_ORDER,
+} from "../constants/expenseTypeBadges";
 
 const weekdayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const styles = {
@@ -104,6 +110,43 @@ const styles = {
         opacity: 0.7,
         lineHeight: 1,
         userSelect: "none",
+    },
+
+    resultsLegend: {
+        marginTop: 10,
+        marginBottom: 20,
+        padding: "10px 12px",
+        border: "1px solid rgba(255,255,255,0.14)",
+        borderRadius: 10,
+        background: "rgba(255,255,255,0.03)",
+        boxSizing: "border-box",
+        maxWidth: "100%",
+    },
+
+    resultsLegendTitle: {
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: "0.07em",
+        textTransform: "uppercase",
+        opacity: 0.62,
+        marginBottom: 8,
+    },
+
+    resultsLegendRow: {
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "8px 14px",
+        alignItems: "center",
+        fontSize: 11,
+        lineHeight: 1.2,
+        opacity: 0.9,
+    },
+
+    resultsLegendItem: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        whiteSpace: "nowrap",
     },
 
     monthToggle: {
@@ -385,12 +428,56 @@ const styles = {
         lineHeight: 1.15,
     },
 
-    itemName: {
+    itemNameCell: {
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        minWidth: 0,
+    },
+
+    itemNameText: {
         minWidth: 0,
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
         opacity: 0.92,
+    },
+
+    incomeLineDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 999,
+        flexShrink: 0,
+        background: "#22c55e",
+        boxShadow: "0 0 0 2px rgba(255, 255, 255, 0.08)",
+    },
+
+    weekDayRightCluster: {
+        display: "flex",
+        flex: 1,
+        minWidth: 0,
+        justifyContent: "flex-end",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+
+    weekDayTotalsInCluster: {
+        display: "flex",
+        gap: 10,
+        justifyContent: "flex-end",
+        alignItems: "baseline",
+        fontSize: 12,
+        whiteSpace: "normal",
+        flex: "0 1 auto",
+        minWidth: 0,
+    },
+
+    weekDayDotsMobile: {
+        display: "flex",
+        gap: 4,
+        alignItems: "center",
+        flexShrink: 0,
     },
 
     itemAmount: {
@@ -712,6 +799,23 @@ const ProjectionResults = ({
             </button>
           </div>
         </div>
+
+        <div className="no-print" style={styles.resultsLegend} aria-label="Line item legend">
+          <div style={styles.resultsLegendTitle}>Legend</div>
+          <div style={styles.resultsLegendRow}>
+            <span style={styles.resultsLegendItem}>
+              <span aria-hidden="true" title="Income" style={styles.incomeLineDot} />
+              <span>Income</span>
+            </span>
+            {PROJECTION_EXPENSE_LEGEND_ORDER.map((t) => (
+              <span key={t} style={styles.resultsLegendItem}>
+                <ExpenseTypeDot type={t} />
+                <span>{EXPENSE_TYPE_BADGES[t]?.label ?? t}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
         {Object.entries(monthsByKey).map(([monthKey, days], index) => {
             const monthName = format(days[0].date, "MMMM yyyy");
 
@@ -874,7 +978,9 @@ const ProjectionResults = ({
                               </summary>
 
                               <div style={styles.weekDaysList}>
-                                {realDays.map((day, dIdx) => (
+                                {realDays.map((day, dIdx) => {
+                                  const expenseTypes = getOrderedUniqueExpenseTypes(day.expenseItems);
+                                  return (
                                   <ToolTip
                                     key={dIdx}
                                     content={<DayTooltip day={day} />}
@@ -888,14 +994,32 @@ const ProjectionResults = ({
                                       <div style={{ ...styles.weekDayDate, ...styles.weekDayDateMobile }}>
                                         {format(day.date, "EEE d")}
                                       </div>
-                                      <div style={{ ...styles.weekDayTotals, ...styles.weekDayTotalsMobile }}>
-                                        <span style={styles.income}>+{formatMoney(day.income || 0)}</span>
-                                        <span style={styles.spent}>-{formatMoney(day.spent || 0)}</span>
-                                        <span style={styles.balance}>{formatMoney(day.balance)}</span>
+                                      <div style={styles.weekDayRightCluster}>
+                                        <div
+                                          style={{
+                                            ...styles.weekDayTotals,
+                                            ...styles.weekDayTotalsInCluster,
+                                          }}
+                                        >
+                                          <span style={styles.income}>+{formatMoney(day.income || 0)}</span>
+                                          <span style={styles.spent}>-{formatMoney(day.spent || 0)}</span>
+                                          <span style={styles.balance}>{formatMoney(day.balance)}</span>
+                                        </div>
+                                        {expenseTypes.length > 0 ? (
+                                          <div
+                                            style={styles.weekDayDotsMobile}
+                                            aria-label="Expense categories this day"
+                                          >
+                                            {expenseTypes.map((t) => (
+                                              <ExpenseTypeDot key={t} type={t} />
+                                            ))}
+                                          </div>
+                                        ) : null}
                                       </div>
                                     </div>
                                   </ToolTip>
-                                ))}
+                                  );
+                                })}
                               </div>
                             </details>
                           );
@@ -931,7 +1055,12 @@ const ProjectionResults = ({
                                           <>
                                             {day.expenseItems?.map((item, j) => (
                                               <div key={`e-${j}`} style={styles.itemRow}>
-                                                <div style={styles.itemName}>{item?.name ?? "Expense"}</div>
+                                                <div style={styles.itemNameCell}>
+                                                  <ExpenseTypeDot type={item?.type} />
+                                                  <div style={styles.itemNameText}>
+                                                    {item?.name ?? "Expense"}
+                                                  </div>
+                                                </div>
                                                 <div style={{ ...styles.itemAmount, ...styles.spent }}>
                                                   -{formatMoney(item?.amount)}
                                                 </div>
@@ -940,7 +1069,16 @@ const ProjectionResults = ({
 
                                             {day.incomeItems?.map((item, j) => (
                                               <div key={`i-${j}`} style={styles.itemRow}>
-                                                <div style={styles.itemName}>{item?.name ?? "Income"}</div>
+                                                <div style={styles.itemNameCell}>
+                                                  <span
+                                                    aria-hidden="true"
+                                                    title="Income"
+                                                    style={styles.incomeLineDot}
+                                                  />
+                                                  <div style={styles.itemNameText}>
+                                                    {item?.name ?? "Income"}
+                                                  </div>
+                                                </div>
                                                 <div style={{ ...styles.itemAmount, ...styles.income }}>
                                                   +{formatMoney(item?.amount)}
                                                 </div>

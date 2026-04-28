@@ -3,6 +3,8 @@ import {
   RAIL_OVERLAY_WIDTH_PX,
   RAIL_SLIDE_TRANSITION,
 } from "../constants/sideRails";
+import { EXPENSE_TYPE_BADGES, EXPENSE_TYPE_ORDER } from "../constants/expenseTypeBadges";
+import ExpenseTypeDot from "./ExpenseTypeDot";
 
 const shellBase = {
   position: "fixed",
@@ -182,15 +184,6 @@ const styles = {
     minWidth: 0,
   },
 
-  typeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 999,
-    flexShrink: 0,
-    boxShadow: "0 0 0 2px rgba(255, 255, 255, 0.08)",
-    marginTop: 3,
-  },
-
   nameText: {
     minWidth: 0,
     whiteSpace: "normal",
@@ -320,56 +313,13 @@ const styles = {
   },
 };
 
-const EXPENSE_TYPES = [
-  "subscription",
-  "bill",
-  "debt",
-  "credit_card",
-  "utility",
-  "insurance",
-  "other",
-];
-
-const TYPE_BADGES = {
-  subscription: { label: "Subscription", dot: "#818cf8" }, // indigo-400
-  bill: { label: "Bill", dot: "#60a5fa" }, // blue-400
-  debt: { label: "Debt", dot: "#f87171" }, // red-400
-  credit_card: { label: "Card", dot: "#fbbf24" }, // amber-400
-  utility: { label: "Utility", dot: "#34d399" }, // emerald-400
-  insurance: { label: "Insurance", dot: "#c084fc" }, // purple-400
-  other: { label: "Other", dot: "#cbd5e1" }, // slate-300
-};
-
-function TypeDot({ type }) {
-  const key = String(type || "other");
-  const badge = TYPE_BADGES[key] ?? TYPE_BADGES.other;
-  return (
-    <span
-      style={{
-        ...styles.typeDot,
-        background: badge.dot,
-      }}
-      title={badge.label}
-    />
-  );
-}
-
 function Legend() {
-  const items = [
-    "subscription",
-    "bill",
-    "debt",
-    "credit_card",
-    "utility",
-    "insurance",
-    "other",
-  ];
   return (
     <div style={styles.legend} aria-label="Expense type legend">
-      {items.map((t) => (
+      {EXPENSE_TYPE_ORDER.map((t) => (
         <span key={t} style={styles.legendItem}>
-          <TypeDot type={t} />
-          <span>{TYPE_BADGES[t]?.label ?? "Other"}</span>
+          <ExpenseTypeDot type={t} />
+          <span>{EXPENSE_TYPE_BADGES[t]?.label ?? "Other"}</span>
         </span>
       ))}
     </div>
@@ -578,7 +528,7 @@ export default function RecurringExpensesCalendar({
                         <div style={styles.expenseRow}>
                           <div style={styles.expenseName}>
                             <div style={styles.nameRow}>
-                              <TypeDot type={e.type} />
+                              <ExpenseTypeDot type={e.type} style={{ marginTop: 3 }} />
                               <span style={styles.nameText}>{e.name}</span>
                             </div>
                           </div>
@@ -630,7 +580,7 @@ export default function RecurringExpensesCalendar({
                           setDraftExpense((prev) => ({ ...prev, type: e.target.value }))
                         }
                       >
-                        {EXPENSE_TYPES.map((t) => (
+                        {EXPENSE_TYPE_ORDER.map((t) => (
                           <option key={t} value={t}>
                             {t.replace(/_/g, " ")}
                           </option>
